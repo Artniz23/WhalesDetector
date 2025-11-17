@@ -1,0 +1,15 @@
+{
+  "name": "whales-detector",
+  "version": "1.0.0",
+  "description": "Whales detector project",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Artem Nizelskiy",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^39.2.1"
+  }
+}

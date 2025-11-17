@@ -1,0 +1,23 @@
+    # Folders
+    .idea
+
+    # Node.js
+    node_modules/
+    npm-debug.log
+    yarn-debug.log
+    .DS_Store
+    .env
+
+    # Electron-specific ignores
+    out/
+    dist/
+    build/
+    release/
+    temp/
+    *.asar
+    *.zip
+    *.dmg
+    *.exe
+    *.deb
+    *.rpm
+    *.AppImage
