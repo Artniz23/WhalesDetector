@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Whale Detector</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <h1>Whale Image Detector</h1>
+
+    <!-- Drop Zone -->
+    <div id="dropZone" class="drop-zone">
+      <div class="drop-zone-content">
+        <p>Перетащите изображение сюда или нажмите для выбора</p>
+        <input type="file" id="fileInput" accept="image/*" style="display: none;" />
+      </div>
+    </div>
+
+    <!-- Spinner -->
+    <div id="spinner" class="spinner" style="display: none;">
+      <div class="spinner-inner"></div>
+      <p>Отправка на сервер...</p>
+    </div>
+
+    <!-- Result Container -->
+    <div id="resultContainer" class="result-container" style="display: none;">
+      <h2>Результат:</h2>
+      <img id="resultImage" src="" alt="Результат обработки" />
+    </div>
+  </body>
+</html>
