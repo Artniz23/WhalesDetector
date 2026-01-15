@@ -1,33 +1,88 @@
-/**
- * This file will automatically be loaded by webpack and run in the "renderer" context.
- * To learn more about the differences between the "main" and the "renderer" context in
- * Electron, visit:
- *
- * https://electronjs.org/docs/latest/tutorial/process-model
- *
- * By default, Node.js integration in this file is disabled. When enabling Node.js integration
- * in a renderer process, please be aware of potential security implications. You can read
- * more about security risks here:
- *
- * https://electronjs.org/docs/tutorial/security
- *
- * To enable Node.js integration in this file, open up `main.js` and enable the `nodeIntegration`
- * flag:
- *
- * ```
- *  // Create the browser window.
- *  mainWindow = new BrowserWindow({
- *    width: 800,
- *    height: 600,
- *    webPreferences: {
- *      nodeIntegration: true
- *    }
- *  });
- * ```
- */
-
 import './index.css';
 
-console.log(
-  '👋 This message is being logged by "renderer.js", included via webpack',
-);
+// Получаем элементы DOM
+const dropZone = document.getElementById('dropZone')!;
+const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+const spinner = document.getElementById('spinner')!;
+const resultContainer = document.getElementById('resultContainer')!;
+const resultImage = document.getElementById('resultImage') as HTMLImageElement;
+
+// Обработка клика на drop zone для открытия диалога выбора файла
+dropZone.addEventListener('click', () => {
+  fileInput.click();
+});
+
+// Обработка выбора файла через input
+fileInput.addEventListener('change', (e) => {
+  const files = (e.target as HTMLInputElement).files;
+  if (files && files.length > 0) {
+    handleImageUpload(files[0]);
+  }
+});
+
+// Drag and Drop обработчики
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.classList.add('dragover');
+});
+
+dropZone.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.classList.remove('dragover');
+});
+
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.classList.remove('dragover');
+
+  const files = e.dataTransfer?.files;
+  if (files && files.length > 0) {
+    const file = files[0];
+    // Проверяем, что это изображение
+    if (file.type.startsWith('image/')) {
+      handleImageUpload(file);
+    } else {
+      alert('Пожалуйста, загрузите изображение');
+    }
+  }
+});
+
+// Функция для отправки изображения на backend
+async function handleImageUpload(file: File) {
+  // Скрываем результаты и показываем спиннер
+  resultContainer.style.display = 'none';
+  spinner.style.display = 'flex';
+
+  try {
+    // Создаем FormData для отправки файла
+    const formData = new FormData();
+    formData.append('image', file);
+
+    // Отправляем запрос на backend
+    const response = await fetch('http://localhost:8005/api/detect', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ошибка сервера: ${response.statusText}`);
+    }
+
+    // Получаем изображение в ответе
+    const blob = await response.blob();
+    const imageUrl = URL.createObjectURL(blob);
+
+    // Отображаем результат
+    resultImage.src = imageUrl;
+    spinner.style.display = 'none';
+    resultContainer.style.display = 'block';
+
+  } catch (error) {
+    console.error('Ошибка при загрузке изображения:', error);
+    spinner.style.display = 'none';
+    alert(`Ошибка: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
+  }
+}
